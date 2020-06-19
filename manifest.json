@@ -1,0 +1,77 @@
+{
+	"name": "Aisuit",
+	"appid": "__UNI__85FB11E",
+	"description": "",
+	"transformPx": false,
+	"icons": [{
+		"sizes": "分辨率，192x192",
+		"src": "/static/icon/logo.png"
+	}],
+	"versionName": "1.0.0",
+	"versionCode": 100,
+	"app-plus": {
+		"usingComponents": true,
+		"nvueCompiler": "uni-app",
+		"compilerVersion": 3,
+		"nvueLaunchMode": "fast",
+		"splashscreen": {
+			"alwaysShowBeforeRender": true,
+			"waiting": true,
+			"autoclose": true,
+			"delay": 0
+		},
+		"distribute": {
+			"sdkConfigs": {
+				"oauth": {
+					"weixin": {
+						"appid": "wx3961d52b0c430383",
+						"appsecret": "c5334026aecb748290337de9922e3e2e",
+						"UniversalLinks": "https://temple.dev.renrenfo.cn/apple-app-site-association/"
+					}
+				},
+				"share": {
+					"weixin": {
+						"appid": "wx3961d52b0c430383",
+						"UniversalLinks": ""
+					}
+				}
+			},
+			"android": {
+				"permissions": [
+					"<uses-feature android:name=\"android.hardware.camera\"/>",
+					"<uses-feature android:name=\"android.hardware.camera.autofocus\"/>",
+					"<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
+					"<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
+					"<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+					"<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+					"<uses-permission android:name=\"android.permission.CALL_PHONE\"/>",
+					"<uses-permission android:name=\"android.permission.CAMERA\"/>",
+					"<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
+					"<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
+					"<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
+					"<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
+					"<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
+					"<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+					"<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>",
+					"<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
+					"<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
+					"<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>",
+					"<uses-permission android:name=\"android.permission.VIBRATE\"/>",
+					"<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
+					"<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>",
+					"<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
+				]
+			},
+			"icons": {
+				"android": {
+					"xxxhdpi": "static/icon/logo.png"
+				}
+			}
+		},
+		"modules": {
+			"VideoPlayer": {},
+			"Share": {},
+			"OAuth": {}
+		}
+	}
+}

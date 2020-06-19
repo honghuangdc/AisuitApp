@@ -1,0 +1,29 @@
+<template>
+	<view class="container" :style="{ height: windowHeight + 'px' }">
+		
+	</view>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			windowHeight: 675,
+			videoList: [],
+		};
+	},
+	onLoad() {
+		this.windowHeight = uni.getSystemInfoSync().windowHeight
+		console.log(uni.getSystemInfoSync())
+	}
+}
+</script>
+
+<style scoped>
+.container {
+	width: 750upx;
+	border-style: solid;
+	border-color: #00FF00;
+	border-width: 1upx;
+}
+</style>

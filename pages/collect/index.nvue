@@ -1,0 +1,234 @@
+<template>
+	<view class="collect-container" :style="{ height: windowHeight + 'px' }">
+		<view class="tabs">
+			<view
+				v-for="item in tabs"
+				:key="item.tag"
+				:class="{'tab-item': true, 'active-tab': current === item.tag}"
+				@click="current = item.tag"
+			>
+				<text :class="{'tab-name': true, 'active-tab-name': current === item.tag}">{{ item.name }}</text>
+			</view>
+		</view>
+		<view class="tab-content">
+			<template v-if="current === 'article'">
+				<view class="article">
+					<view
+						class="article-item"
+						v-for="(item, index) in article"
+						:key="index"
+						:data-data="item"
+						@click="toKnowledgeDetail" 
+					>
+						<image class="article-cover" :src="item.cover" mode="aspectFill"></image>
+						<view class="article-detail">
+							<text class="article-title">{{ item.content }}</text>
+							<text class="article-type">{{ item.type }}</text>
+							<view class="like">
+								<image class="icon-like" src="/static/icon/collect_active.png"></image>
+								<text class="num-like">{{ item.likeNum }}</text>
+							</view>
+						</view>
+					</view>
+				</view>
+			</template>
+			<template v-else>
+				<view class="lession">
+					<view
+						v-for="(item, index) in lession"
+						:key="index"
+						class="lession-list-item"
+						@click="toLession"
+					>
+						<image class="lession-video-cover" :src="item.cover" mode="aspectFill"></image>
+						<view class="lession-video-description">
+							<text class="lession-video-title">{{ item.title }}</text>
+							<view class="lession-video-source-and-playtimes">
+								<text class="lession-video-source">来源：{{ item.source }}</text>
+								<text class="lession-video-play-times">{{ item.playTimes }}次播放</text>
+							</view>
+							<text class="lession-video-published-time">发布时间：{{ item.publishedTime }}</text>
+						</view>
+						<view class="lession-like">
+							<image class="icon-like" src="/static/icon/collect_active.png"></image>
+							<text class="num-like">{{ item.likeNum }}</text>
+						</view>
+					</view>
+				</view>
+			</template>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				windowHeight: 675,
+				tabs: [
+					{ name: '文章', tag: 'article' },
+					{ name: '公开课', tag: 'lession' }
+				],
+				current: 'article',
+				article: [
+					{ content: 'article久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '862', article: '这是文章内容' },
+					{ content: 'article久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '861' },
+					{ content: 'article久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '860' },
+				],
+				lession: [
+					{
+						title: '全身减脂训练二：啦啦啦啦啦啦啦啦啦啦啦~',
+						cover: '/static/img/knowledge-demo.png',
+						source: 'B站',
+						playTimes: 360,
+						publishedTime: '2019年6月8日',
+						likeNum: 666
+					},
+					{
+						title: '全身减脂训练三：啦啦啦啦啦啦啦啦啦啦啦~',
+						cover: '/static/img/knowledge-demo.png',
+						source: 'B站',
+						playTimes: 360,
+						publishedTime: '2019年6月8日',
+						likeNum: 666
+					}
+				]
+			}
+		},
+		methods: {
+			changeCurrent(e) {
+				this.current = e.detail.current
+			},
+			toKnowledgeDetail(e) {
+				const detailData = JSON.stringify(e.currentTarget.dataset.data);
+				uni.navigateTo({
+					url: `/pages/customize/knowledge-detail?data=${detailData}`
+				})
+			},
+			toLession(e) {
+				uni.navigateTo({
+					url: "/pages/customize/lession"
+				})
+			},
+		},
+		onLoad() {
+			this.windowHeight = uni.getSystemInfoSync().windowHeight
+		}
+	}
+</script>
+
+<style scoped>
+	.collect-container {
+		width: 750upx;
+		background-color: #f5f5f5;
+	}
+	.tabs {
+		flex-direction: row;
+		padding: 16upx 30upx;
+		background-color: #fff;
+	}
+	.tab-item {
+		margin: 0 10upx;
+	}
+	.active-tab {
+		border-style: solid;
+		border-bottom-color: #FC3D5F;
+		border-bottom-width: 2upx;
+	}
+	.tab-name {
+		font-size: 30upx;
+		color: #333;
+		padding: 16upx 20upx;
+	}
+	.active-tab-name {
+		color: #FC3D5F;
+	}
+	.tab-content {
+		padding: 0 30upx;
+		background-color: #F5F5F5;
+	}
+  .article-item {
+		width: 690upx;
+		height: 240upx;
+		margin-top: 36upx;
+		background-color: #fff;
+		flex-direction: row;
+	} 
+	
+	.article-cover {
+		width: 240upx;
+		height: 240upx;
+	}
+	
+	.article-detail {
+		padding: 36upx 20upx;
+	}
+	.article-title {
+		width: 300upx;
+		font-size: 30upx;
+		color: #333;
+	}
+	.article-type {
+		font-size: 28upx;
+		color: #726C6C;
+		margin-top: 18upx;
+	}
+	.like {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 20upx;
+	}
+	.icon-like {
+		width: 34upx;
+		height: 34upx;
+		margin-right: 32upx;
+	}
+	.num-like {
+		font-size: 28upx;
+		color: #726C6C;
+	}
+	/* 公开课 */
+	.lession-list-item {
+		flex-direction: row;
+		position: relative;
+		margin-top: 36upx;
+		background-color: #fff;
+	}
+	.lession-video-cover {
+		width: 240upx;
+		height: 240upx;
+		border-radius: 10upx;
+	}
+	.lession-video-description {
+		justify-content: space-around;
+		padding: 30upx 0 30upx 24upx;
+	}
+	.lession-video-title {
+		width: 360upx;
+		font-size: 30upx;
+		color: #333;
+	}
+	.lession-video-source-and-playtimes {
+		flex-direction: row;
+		align-items: center;
+	}
+	.lession-video-source {
+		margin-right: 51upx;
+		font-size: 24upx;
+		color: #726C6C;
+	}
+	.lession-video-play-times {
+		font-size: 24upx;
+		color: #726C6C;
+	}
+	.lession-video-published-time {
+		font-size: 24upx;
+		color: #726C6C;
+	}
+	.lession-like {
+		position: absolute;
+		flex-direction: row;
+		right: 36upx;
+		bottom: 18upx;
+	}
+</style>

@@ -1,0 +1,345 @@
+<template>
+	<view class="aivideo-container">
+		<video
+			class="video"
+			:id="videoId"
+			:style="{ height: height + 'px'}"
+			:src="src"
+			:controls="false"
+			:loop="true"
+			:enable-progress-gesture="false"
+			:page-gesture="false"
+			:show-fullscreen-btn="false"
+			:show-center-play-btn="false"
+			@play="status = 'playing'"
+			@pause="status = 'pausing'"
+		>
+		</video>
+		<view @click="handleVideo" class="play-btn" :style="{ height: height + 'px' }">
+			<image
+				v-if="status === 'pausing'"
+				class="icon-play"
+				src="/static/icon/play.png"
+				mode="aspectFill"
+			>
+			</image>
+		</view>
+		<view class="video-buttons">
+			<cover-image @click="like" class="video-buttons-icon" :src=" isLike ? '/static/icon/like_red.png' : '/static/icon/like.png'" mode="aspectFill"></cover-image>
+			<text class="video-buttons-text">喜欢</text>
+			<cover-image @click="handleCommentModal" class="video-buttons-icon" src="/static/icon/comment.png" mode="aspectFill"></cover-image>
+			<text class="video-buttons-text">评论</text>
+			<!-- <cover-image @click="share" class="video-buttons-icon" src="/static/icon/share.png" mode="aspectFill"></cover-image>
+			<text class="video-buttons-text">分享</text> -->
+		</view>
+		<cover-view @click="stopBubbling" class="comment-modal" :style="{ height: showCommentModal ? height - commentModalMarginTop + 'px' : 0 }">
+			<view class="close-btn-container">
+				<image @click="closeCommentModal" class="icon-close" src="/static/icon/close.png" mode="aspectFill"></image>
+			</view>
+			<text class="comment-total">{{ commentTotal }}条评论</text>
+			<list class="comment-list">
+				<cell class="list-cell" v-for="(item, index) in commentData" :key="index">
+					<image class="comment-avatar" :src="item.avatar" mode="aspectFill"></image>
+					<view class="comment-main">
+						<text class="comment-username">{{ item.userName }}</text>
+						<text class="comment-content">{{ item.comment }}</text>
+						<view class="response-comment-list">
+							<view class="response-comment-cell" v-for="(value, i) in item.responseComment" :key="i">
+								<image class="response-comment-avatar" :src="value.avatar" mode="aspectFill"></image>
+								<view class="response-comment-main">
+									<text class="response-comment-username">{{ value.userName }}</text>
+									<text class="response-comment-content">{{ value.comment }}</text>
+									<image class="response-comment-icon-like" src="/static/icon/like_gray.png" mode="aspectFill"></image>
+								</view>
+							</view>
+						</view>
+						<image class="comment-icon-like" src="/static/icon/like_gray.png" mode="aspectFill"></image>
+					</view>
+				</cell>
+			</list>
+		</cover-view>
+	</view>
+</template>
+
+<script>
+	import { transformPxRpx } from '@/utils/util.js'
+	export default {
+		props: {
+			height: Number,
+			src: String,
+			videoId: String,
+			videoIndex: Number,  //视频索引
+			playingVideoIndex: Number   ,//屏幕当前显示的视频的索引,
+			isLike: {
+				type: Boolean,
+				default: false
+			},
+			commentTotal: {
+				type: Number,
+				default: 480
+			},
+			modalTimes: {
+				type: Number,
+				default: 0
+			}
+		},
+		data() {
+			return {
+				videoCtx: null,
+				status: 'default',  // 初始状态：default； 暂停状态：pausing；播放状态：playing
+				doubleClickTime: 0,  //双击时间差
+				showCommentModal: false,
+				commentModalMarginTop: transformPxRpx(300, 'rpxToPx'),
+				commentData: [
+					{
+						userName: '健身狂人',
+						avatar: '/static/img/index_avatar.png',
+						comment: '感谢大家的支持，让我有动力坚持创作更多新颖的作品，特别感谢我好朋友，@动感超人~',
+						likeNum: 3200,
+						likeUsers: [],
+						responseComment: [
+							{
+								userName: '动感超人',
+								avatar: '/static/img/index_avatar.png',
+								comment: '欣慰，小女子收下你的感谢了，帮你的过程中，自己也能学到不少，长长见识咯，不然喔这些脂肪还无用武之地~',
+								likeNum: 392,
+								likeUsers: []
+							},
+							{
+								userName: '小可爱',
+								avatar: '/static/img/index_avatar.png',
+								comment: '大家表示不想看到你们“秀恩爱”，这里现在起码不止一树柠檬精吧，要秀回家慢慢秀，回来小姑给你做好吃的~',
+								likeNum: 205,
+								likeUsers: []
+							},
+						]
+					},
+					{
+						userName: '管我是谁',
+						avatar: '/static/img/index_avatar.png',
+						comment: '关注你那么久，从来不翻我，小脾气。',
+						likeNum: 162,
+						likeUsers: [],
+						responseComment: [
+							{
+								userName: '健身狂人',
+								avatar: '/static/img/index_avatar.png',
+								comment: '翻，不生气更漂亮哟。',
+								likeNum: 124,
+								likeUsers: []
+							}
+						]
+					}
+				]
+			}
+		},
+		created() {
+			this.videoCtx = uni.createVideoContext(this.videoId)
+		},
+		mounted() {
+			if(this.videoIndex === 0) {
+				this.videoCtx.play()
+			}
+		},
+		methods: {
+			handleVideo() {
+				this.status === 'pausing' ? this.videoCtx.play() : this.videoCtx.pause()
+				const nowTime = new Date().getTime()
+				if(nowTime - this.doubleClickTime <= 200) {
+					this.status === 'pausing' ? this.videoCtx.play() : this.videoCtx.pause()
+					this.isLike = true
+					this.$emit('isLike', this.isLike)
+				} else {
+					this.doubleClickTime = nowTime
+				}
+			},
+			like() {
+				this.isLike = !this.isLike
+			},
+			// share() {
+			// 	console.log('share')
+			// },
+			handleCommentModal() {
+				this.$emit('modalStatus', 'show')
+				this.showCommentModal = true
+			},
+			closeCommentModal() {
+				this.$emit('modalStatus', 'hidden')
+				this.showCommentModal = false
+			},
+			stopBubbling() {  //阻止其他事件
+				console.log('stop other events')
+			}
+		},
+		watch: {
+			playingVideoIndex(newValue) {
+				if(newValue === this.videoIndex) {
+					this.videoCtx.play()
+				} else {
+					this.videoCtx.stop()
+					this.status = 'default'
+				}
+			},
+			modalTimes(newValue) {
+				if(newValue) {
+					this.showCommentModal = false
+					this.$emit('modalStatus', 'hidden')
+				}
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.aivideo-container {
+		width: 750upx;
+	}
+	.video {
+		width: 750upx;
+	}
+	.play-btn {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 750upx;
+		justify-content: center;
+		align-items: center;
+	}
+	.icon-play {
+		width: 80upx;
+		height: 80upx;
+	}
+	.video-buttons {
+		position: absolute;
+		width: 128upx;
+		height: 275upx;
+		align-items: center;
+		right: 0;
+		top: 790upx;
+	}
+	
+	/* 有分享时的样式 */
+	/* .video-buttons {
+		position: absolute;
+		width: 128upx;
+		height: 400upx;
+		align-items: center;
+		right: 0;
+		top: 750upx;
+	} */
+	.video-buttons-icon {
+		width: 68upx;
+		height: 68upx;
+	}
+	.video-buttons-text {
+		font-size: 24upx;
+		color: #999;
+		margin-bottom: 49upx;
+		text-align: center;
+	}
+	.comment-modal {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		align-items: center;
+		width: 750upx;
+		height: 0;
+		background-color: #fff;
+		border-style: solid;
+		border-color: #efefef;
+		border-width: 1upx;
+		border-radius: 16upx;
+		transition: height 0.5s;
+	}
+	.close-btn-container {
+		width: 750upx;
+		height: 96upx;
+		padding-right: 27upx;
+		justify-content: center;
+		align-items: flex-end;
+	}
+	.icon-close {
+		width: 44upx;
+		height: 44upx;
+	}
+	.comment-total {
+		font-size: 24upx;
+		color: #333;
+		font-weight: bold;
+	}
+	.comment-list {
+		margin-top: 38upx;
+		padding: 0 30upx;
+		width: 750upx;
+	}
+	.list-cell {
+		flex-direction: row;
+	}
+	.comment-avatar {
+		width: 56upx;
+		height: 56upx;
+		border-radius: 56upx;
+		margin-right: 20upx;
+	}
+	.comment-main {
+		position: relative;
+		width: 614upx;
+	}
+	.comment-username {
+		height: 56upx;
+		line-height: 56upx;
+		font-size: 24upx;
+		color: #333;
+		font-weight: bold;
+	}
+	.comment-content {
+		width: 504upx;
+		line-height: 44upx;
+		font-size: 28upx;
+		color: #333;
+	}
+	.comment-icon-like {
+		position: absolute;
+		right: 0;
+		top: 28upx;
+		width: 34upx;
+		height: 34upx;
+	}
+	.response-comment-list {
+		margin-top: 10upx;
+	}
+	.response-comment-cell {
+		width: 614upx;
+		flex-direction: row;
+	}
+	.response-comment-main {
+		position: relative;
+		width: 553upx;
+	}
+	.response-comment-avatar {
+		width: 44upx;
+		height: 44upx;
+		margin-right: 17upx;
+	}
+	.response-comment-username {
+		height: 44upx;
+		line-height: 44upx;
+		font-size: 22upx;
+		color: #333;
+		font-weight: bold;
+	}
+	.response-comment-content {
+		width: 442upx;
+		line-height: 44upx;
+		font-size: 26upx;
+		color: #333;
+	}
+	.response-comment-icon-like {
+		position: absolute;
+		right: 0;
+		top: 19upx;
+		width: 34upx;
+		height: 34upx;
+	}
+	
+</style>

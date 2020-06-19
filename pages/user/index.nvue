@@ -1,0 +1,288 @@
+<template>
+	<view class="container">
+		<template v-if="isLogin">
+			<view class="header" @click="navigateTo('./information')">
+				<image :src="userInfo.userphoto" class="avatar"></image>
+				<text class="user-name">{{ userInfo.nickname }}</text>
+			</view>
+		</template>
+		<template v-else>
+			<view class="header" @click="navigateTo('./login')">
+				<image src="/static/img/unlogin-avatar.png" class="avatar"></image>
+				<text class="user-name">请登陆</text>
+			</view>
+		</template>
+		<view class="body-data">
+			<view class="body-data__header" @click="navigateTo('../body-data/index')">
+				<text class="body-data__title">身体数据</text>
+				<image src="/static/icon/right.png" class="icon__right"></image>
+			</view>
+			<view class="body-data__content" @click="navigateTo('../body-data/modify-bodydata')">
+				<view class="body-data__content-item" v-for="(item, index) in bodyData" :key="index">
+					<text class="body-data__content-item__name">{{ item.name }}</text>
+					<view class="body-data__content-item__value">
+						<text class="body-data__content-item__value__text">{{ item.value ? item.value : '__' }}</text>
+						<text class="body-data__content-item__unit">{{ item.unit }}</text>
+						<view class="red-poiont" v-if="!item.value" :style="{ right: item.name === '性别' ? '28upx' : '10upx' }"></view>
+					</view>
+				</view>
+			</view>
+			<text class="body-data__measure-time">上一次测量时间：{{ lastMeasureTime ? lastMeasureTime : "—— ——" }}</text>
+		</view>
+		<view class="banner" @click="openBrowser">
+			<image class="banner__img" src="/static/img/user_banner.png"></image>
+			<image
+				:class="{ 'click-to-pay__img': true, 'scale-pay-text': scaleText }"
+				src="/static/img/user_click-to-pay.png"
+				mode="aspectFill"
+			>
+			</image>
+		</view>
+		<view class="function">
+			<view
+				v-for="(item, index) in functionData"
+				:key="index"
+				class="function-item"
+				:data-tag="item.tag"
+				@click="handleRouter"
+			>
+				<image :src="item.icon" class="function-item__icon"></image>
+				<text class="function-item__name">{{ item.name }}</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			windowHeight: 675,
+			userInfo: null,
+			isLogin: false,
+			bodyData: [
+				{ name: '身高', value: '', unit: 'cm' }, 
+				{ name: '体重', value: '', unit: 'kg' },
+				{ name: '性别', value: '' }
+			],
+			lastMeasureTime: '',
+			functionData: [
+				{ name: '量体衣验证', icon: '/static/icon/scan.png', tag: 'validate' },
+				{ name: '我的收藏', icon: '/static/icon/collect.png', tag: 'collect' },
+				{ name: '测量历史', icon: '/static/icon/history.png', tag: 'history' },
+				{ name: '设置更改', icon: '/static/icon/setting.png', tag: 'setting' }
+			],
+			scaleText: false,
+			scaleTextInterval: null
+		};
+	},
+	onLoad() {
+		this.windowHeight = uni.getSystemInfoSync().windowHeight   //获取设备可用视高
+		this.scaleTextInterval = setInterval(() =>{   //创建文字放大定时器
+			this.scaleText = ! this.scaleText
+		}, 1500)
+	},
+	onShow() {
+		this.isLogin = uni.getStorageSync('isLogin')   //判断用户是否登录
+		this.userInfo = uni.getStorageSync('userInfo')   //获取用户信息
+	},
+	methods: {
+		navigateTo(path) {
+			// if(!this.isLogin) {
+			// 	uni.navigateTo({
+			// 		url: './login'
+			// 	})
+			// 	return
+			// }
+			uni.navigateTo({
+				url: path
+			})
+		},
+		openBrowser() {
+			plus.runtime.openURL('https://shop.m.jd.com/?shopId=10133605')
+		},
+		handleRouter(e) {
+			if(!this.isLogin) {
+				uni.navigateTo({
+					url: './login'
+				})
+				return
+			}
+			const { tag } = e.currentTarget.dataset
+			if(tag === 'history') {
+				uni.navigateTo({
+					url: '/pages/body-data/history'
+				})
+			} else {
+				uni.navigateTo({
+					url: `/pages/${tag}/index`
+				})
+			}
+		}
+	},
+	onHide() {
+		this.scaleTextInterval = null
+	}
+};
+</script>
+
+<style scoped>
+.container {
+	width: 750upx;
+	background-color: #f5f5f5;
+}
+
+/* 头部 */
+.header {
+	flex-direction: row;
+	align-items: center;
+	height: 210upx;
+	padding: 0 30upx;
+}
+
+.avatar {
+	width: 144upx;
+	height: 144upx;
+	border-radius: 50%;
+	margin-right: 24upx;
+}
+
+.user-name {
+	font-size: 48upx;
+	font-weight: bold;
+	color: #999;
+}
+
+/* 身体数据 */
+.body-data {
+	margin: 20upx 30upx 0;
+	padding: 10upx 0 28upx;
+	width: 690upx;
+	border-radius: 6upx;
+	background-color: #fff;
+	border-style: solid;
+	border-color: #eee;
+	border-width: 1upx;
+}
+
+.body-data__header {
+	padding: 19upx 0 0 26upx;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.body-data__title {
+	font-size: 40upx;
+	font-weight: bold;
+	color: #333;
+}
+
+.icon__right {
+	width: 42upx;
+	height: 42upx;
+}
+
+.body-data__content {
+	padding: 30upx 64upx;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.body-data__content-item__name {
+	font-size: 30upx;
+	color: #666;
+}
+
+.body-data__content-item__value {
+	position: relative;
+	padding-top: 16upx;
+	padding-left: 6upx;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+}
+.body-data__content-item__value__text {
+	font-size: 59upx;
+	color: #333;
+}
+
+.body-data__content-item__unit {
+	padding: 12upx 20upx;
+	font-size: 36upx;
+	color: #666;
+}
+
+.red-poiont {
+	position: absolute;
+	right: 10upx;
+	top: 25upx;
+	width: 12upx;
+	height: 12upx;
+	border-radius: 50%;
+	background-color: #FC3D5F;
+}
+
+.body-data__measure-time {
+	padding-left: 38upx;
+	font-size: 28upx;
+	color: #666;
+}
+
+/* banner */
+.banner {
+	position: relative;
+	margin: 44upx 30upx;
+	width: 690upx;
+	height: 216upx;
+	background-color: #f5f5f5;
+}
+
+.banner__img {
+	width: 690upx;
+	height: 216upx;
+}
+
+.click-to-pay__img {
+	position: absolute;
+	left: 210upx;
+	bottom: 64upx;
+	width: 96upx;
+	height: 22upx;
+	transform: scale(1);
+	transition: transform 1.5s;
+}
+
+.scale-pay-text {
+	transform: scale(1.5);
+}
+
+/* function */
+.function {
+	flex-direction: row;
+	flex-wrap: wrap;
+	margin: 0 30upx;
+	padding: 15upx 30upx 0;
+	width: 690upx;
+	height: 375upx;
+	background-color: #fff;
+	border-radius: 6upx;
+}
+
+.function-item {
+	width: 210upx;
+	align-items: center;
+	margin-top: 49upx;
+}
+
+.function-item__icon {
+	width: 55upx;
+	height: 55upx;
+	margin-bottom: 22upx;
+}
+
+.function-item__name {
+	font-size: 30upx;
+	color: #666;
+}
+</style>

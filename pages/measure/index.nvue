@@ -1,0 +1,151 @@
+<template>
+	<view class="contanier_measure">
+		<view class="measure-guide" v-if="!isSkip">
+			<swiper
+				class="swiper"
+				:indicator-dots="true"
+				:autoplay="false"
+				:style="{ height: (windowHeight > swiperHeightm ? swiperHeight : windowHeight) + 'upx' }"
+				@change="handleSwiper"
+			>
+				<swiper-item v-for="item in [1,2,3,4,5,6,7,8,9,10]" :key="item" class="swiper-item">
+					<view class="guide-img-wrapper">
+						<image
+							class="guide-img"
+							:src="`../../static/img/measure_guide${item}.png`"
+							:style="{ height: (windowHeight > swiperHeightm ? swiperHeight : windowHeight) + 'upx', width: (windowHeight > swiperHeightm ? swiperHeight * 0.58 : windowHeight * 0.58) + 'upx' }"
+							mode="aspectFit"
+						></image>
+					</view>
+					<text class="guide-text">{{ guideData[item-1] }}</text>
+				</swiper-item>
+			</swiper>
+			<view class="skip-button">
+				<text class="skip-button-text" @click="skip">跳过</text>
+				<image class="skip-button-img" src="../../static/icon/right_red.png"></image>
+			</view>
+		</view>
+		<view class="measure" v-else>
+			<image :src="imgSrc" mode="aspectFill" class="measure-imgs"></image>
+		</view>
+	</view>
+</template>
+
+<script>
+	import { transformPxRpx } from '@/utils/util.js'
+	export default {
+		data() {
+			return {
+				windowHeight: 1292,   // 单位upx
+				swiperHeight: 1292,   // 单位upx
+				isSkip: false,
+				guideData: [
+					'现在我们检查一下服装的穿着',
+					'紧身衣标识位于上衣和裤子的背面',
+					'确保你的手指能穿过袖口',
+					'确保手腕和脚踝上的点是可见的',
+					'手机后置摄像头正对着你',
+					'注意手机的高度和距离',
+					'站在一倍身高的距离处\n双臂自然展开，两脚与肩同宽',
+					'正对手机的方向是0度方向',
+					'你将顺时针旋转，拍12个角度照片',
+					'现在开始拍照啦，请听语音提示\n注意脚下的圆盘'
+				],
+				imgSrc: ''
+			}
+		},
+		methods: {
+			handleSwiper(e){
+				console.log(e)
+			},
+			skip() {
+				// const that = this
+				// this.isSkip = true 
+				// const camera = plus.camera.getCamera(1)
+				// camera.captureImage(
+				// 	function(path) {
+				// 		uni.saveFile({
+				// 			tempFilePath: path,
+				// 			success: res => {
+				// 				that.imgSrc = res.savedFilePath
+				// 			}
+				// 		})
+				// 	},
+				// 	function(error) {
+				// 		console.log(error)
+				// 	},
+				// 	{
+				// 		optimize: true,
+				// 		resolution: camera.supportedImageResolutions[0]
+				// 	},
+				// )
+			}
+		},
+		onLoad() {
+			this.windowHeight = transformPxRpx(uni.getSystemInfoSync().windowHeight, 'pxToRpx')
+		}
+	}
+</script>
+
+<style scoped>
+.contanier_measure {
+	width: 750upx;
+	background-color: #fff;
+}
+.measure-guide {
+	width: 750upx;
+}
+.swiper {
+	position: relative;
+}
+.swiper-item {
+	position: relative;
+	align-items: center;
+}
+.guide-text {
+	position: absolute;
+	width: 580upx;
+	text-align: center;
+	top: 86upx;
+	left: 85upx;
+	font-size: 40upx;
+	color: #333;
+}
+.guide-img-wrapper {
+	width: 750upx;
+	align-items: center;
+}
+.guide-img {
+	/* border-style: solid;
+	border-color: #1677FF;
+	border-width: 1px; */
+}
+.skip-button {
+	position: absolute;
+	right: 0;
+	bottom: 150upx;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 128upx;
+	height: 62upx;
+	background-color: #f5f5f5;
+	box-shadow: 0upx 2upx 4upx 0upx rgba(0,0,0,0.2);
+	border-top-left-radius: 62upx;
+	border-bottom-left-radius: 62upx;
+}
+.skip-button-text {
+	font-size: 30upx;
+	color: #FC3D5F;
+	padding-left: 20upx;
+}
+.skip-button-img {
+	width: 30upx;
+	height: 30upx;
+}
+
+.measure-imgs {
+	width: 750upx;
+	height: 1200upx;
+}
+</style>

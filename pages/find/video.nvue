@@ -1,0 +1,115 @@
+<template>
+	<view class="container">
+		<list :loadmoreoffset="windowHeight * 3" :show-scrollbar="false" :pagingEnabled="true" :scrollable="true">
+			<cell v-for="(item, index) in videoData" :key="index">
+				<view class="video-list-item" :style="{ height: windowHeight + 'px' }">
+					<ai-video
+						:height="windowHeight"
+						:src="item.video_url"
+						:videoId="item.itemid"
+						:videoIndex="index"
+						:playingVideoIndex="currentVideoIndex"
+						@isLike="getLikeSign"
+						@modalStatus="getModalStatus"
+						:modalTimes="commentModalActionTime"
+					>
+					</ai-video>
+					<view @appear="currentVideoIndex = index" class="appear"></view>
+				</view>
+			</cell>
+		</list>
+	</view>
+</template>
+<script>
+	import AiVideo from '../../components/AiVideo.nvue'
+	export default {
+		components: { AiVideo },
+		data() {
+			return {
+				windowHeight: 675,
+				videoData: [],
+				page: 1,
+				currentVideoIndex: 0,
+				status: 'default',
+				handleFlag: 0,
+				likeVideoList: [0, 1],
+				commentModalActionTime: 0,
+				commentModalStatus: 'hidden'
+			}
+		},
+		methods: {
+			getVideoData() {
+				uni.request({
+					url: `https://www.haodanku.com/trill/get_trill_items?min_id=${this.page}&back=15&douyin_cid=4`,
+					method: 'GET',
+					success: res => {
+						this.videoData = res.data.data
+					}
+				})
+			},
+			getLikeSign(e) {
+				console.log(e)
+			},
+			getModalStatus(e) {
+				this.commentModalStatus = e
+			}
+		},
+		onLoad() {
+			this.windowHeight = uni.getSystemInfoSync().windowHeight
+			this.getVideoData()
+		},
+		onBackPress(e) {
+			if(e.from === 'backbutton' && this.commentModalStatus === 'show') {
+				this.commentModalActionTime ++
+				return true
+			}
+		}
+	}
+</script>
+<style scoped>
+	.container {
+		width: 750upx;
+		flex: 1;
+	}
+	.video-list-item {
+		position: relative;
+		width : 750upx;
+		background-color: #000000;
+		align-items: center;
+		justify-content: center;
+	}
+	.video-mask {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 750upx;
+		justify-content: center;
+		align-items: center;
+	}
+	.appear {
+		position: absolute;
+		width: 100upx;
+		height: 100upx;
+		right: 0;
+		top: 100upx;
+	}
+	.icon-like {
+		width: 68upx;
+		height: 68upx;
+	}
+	.icon-comment {
+		width: 68upx;
+		height: 68upx;
+	}
+	.like-text {
+		font-size: 24upx;
+		color: #999;
+		margin-bottom: 49upx;
+		text-align: center;
+	}
+	.comment-text {
+		font-size: 24upx;
+		color: #999;
+		text-align: center;
+	}
+</style>

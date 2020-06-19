@@ -1,0 +1,71 @@
+<template>
+	<view class="validate-container">
+		<image class="guide-img" src="/static/img/validate_guide.png" mode="scaleToFill"></image>
+		<text class="tip">在底盘上找到二维码并扫码激活</text>
+		<view class="next-button">
+			<text class="button-text" @click="scan">进入扫码</text>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				
+			}
+		},
+		methods: {
+			scan() {
+				uni.scanCode({
+					success: res => {
+						console.log(res)
+					}
+				})
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.validate-container {
+		width: 750upx;
+		position: relative;
+		align-items: center;
+	}
+	.guide-img {
+		width: 750upx;
+		height: 1292upx;
+	}
+	.close {
+		position: absolute;
+		left: 48upx;
+		top: 0;
+	}
+	.icon-close {
+		width: 80upx;
+		height: 80upx;
+	}
+	.tip {
+		position: absolute;
+		top: 1050upx;
+		text-align: center;
+		font-size: 32upx;
+		color: #333;
+	}
+	.next-button {
+		align-items: center;
+		justify-content: center;
+		width: 320upx;
+		height: 94upx;
+		position: absolute;
+		top: 1150upx;
+		background-color: #fc3d5f;
+		border-radius: 6upx;
+	}
+	
+	.button-text {
+		font-size: 36upx;
+		color: #fff;
+	}
+</style>

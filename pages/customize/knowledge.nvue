@@ -1,0 +1,152 @@
+<template>
+	<view class="container-knowledge">
+		<view class="side-tab">
+			<view class="tab-item"
+				v-for="(item,index) in tabs"
+				:key="index"
+				:data-tab="item.tag"
+				@click="changeTab"
+			>
+				<text :class="{'tab-name': true, 'active-tab': currentTab === item.tag}">
+					{{ item.name }}
+				</text>
+			</view>
+		</view>
+		<view class="tab-content">
+			<view class="content-item" v-for="(item, index) in knowledgeData[currentTab]" :key="index">
+				<image class="cover-knowledge" :src="item.cover" mode="aspectFill"></image>
+				<view class="knowledge-item" @click="toKnowledgeDetail" :data-data="item" >
+					<text class="knowledge-item-text">{{ item.content }}</text>
+					<text class="knowledge-type">{{ item.type }}</text>
+					<view class="like">
+						<image class="icon-like" src="/static/icon/collect_disabled.png"></image>
+						<text class="num-like">{{ item.likeNum }}</text>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				currentTab: 'build',
+				tabs: [
+					{ name: '塑形', tag: 'build' },
+					{ name: '减脂', tag: 'fat' },
+					{ name: '饮食', tag: 'diet' }
+				],
+				currenTabContent: null,
+				knowledgeData: {
+					'build': [
+						{ content: 'build久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '862', article: '这是文章内容' },
+						{ content: 'build久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '861' },
+						{ content: 'build久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '860' },
+					],
+					'fat': [
+						{ content: 'fat久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '862' },
+						{ content: 'fat久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '861' },
+						{ content: 'fat久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '860' },
+					],
+					'diet': [
+						{ content: 'diet久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '862' },
+						{ content: 'diet久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '861' },
+						{ content: 'diet久坐人群必备-肩颈', cover: '/static/img/knowledge-demo.png', type: '零基础', likeNum: '860' },
+					],
+				}
+			}
+		},
+		methods: {
+			changeTab(e) {
+				this.currentTab = e.currentTarget.dataset.tab
+			},
+			toKnowledgeDetail(e) {
+				const detailData = JSON.stringify(e.currentTarget.dataset.data);
+				uni.navigateTo({
+					url: `./knowledge-detail?data=${detailData}`
+				})
+			}
+		},
+		onLoad() {
+			this.currenTabContent = this.knowledgeData[this.currentTab]
+		}
+	}
+</script>
+
+<style scoped>
+
+	.container-knowledge {
+		flex-direction: row;
+	}
+	
+	.side-tab {
+		width: 150upx;
+		padding-top: 50upx;
+	}
+	.tab-item {
+		height: 150upx;
+		width: 150upx;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+	.active-tab {
+		color: #FC3D5F;
+	}
+	.tab-name {
+		width: 150upx;
+		font-size: 30upx;
+		color: #666;
+	}
+	
+	
+	.tab-content {
+		width: 600upx;
+		padding: 36upx 20upx 0;
+		background-color: #f5f5f5;
+	}
+	
+	.content-item {
+		width: 560upx;
+		height: 240upx;
+		margin-bottom: 36upx;
+		background-color: #fff;
+		flex-direction: row;
+	} 
+	
+	.cover-knowledge {
+		width: 240upx;
+		height: 240upx;
+	}
+	
+	.knowledge-item {
+		padding: 36upx 20upx;
+	}
+	.knowledge-item-text {
+		width: 300upx;
+		font-size: 30upx;
+		color: #333;
+	}
+	.knowledge-type {
+		font-size: 28upx;
+		color: #726C6C;
+		margin-top: 18upx;
+	}
+	.like {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 20upx;
+	}
+	.icon-like {
+		width: 34upx;
+		height: 34upx;
+		margin-right: 32upx;
+	}
+	.num-like {
+		font-size: 28upx;
+		color: #726C6C;
+	}
+	
+</style>

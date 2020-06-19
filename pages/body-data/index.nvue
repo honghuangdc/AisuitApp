@@ -1,0 +1,118 @@
+<template>
+	<view class="container">
+		<web-view
+			:style="{ height: windowHeight + 'px', width: windowWidth + 'px' }"
+			:src="webViewSrc"
+			@onPostMessage="getHtmlResponseData"
+		></web-view>
+		<view :class="['share-modal', showShareModal ? '' : 'hide-modal']">
+			<text class="share-text">分享到</text>
+			<view class="icon-wrapper">
+				<view class="wechat">
+					<image class="icon-wechat" src="/static/icon/wechat-friend.png" mode="aspectFill"></image>
+					<text class="wechat-text">朋友圈</text>
+				</view>
+				<view class="wechat">
+					<image class="icon-wechat" src="/static/icon/wechat.png" mode="aspectFill"></image>
+					<text class="wechat-text">微信</text>
+				</view>
+			</view>
+			<text class="cancel-modal" @click="showShareModal = false">取消</text>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				webViewSrc: '/hybrid/html/local.html?data=',
+				htmlData: {
+					a: 1,
+					b: '2',
+					c: [1,2,3,4],
+					d: { e: 1, f: '3' }
+				},
+				windowHeight: 675,
+				windowWidth: 375,
+				showShareModal: false
+			}
+		},
+		onNavigationBarButtonTap() {
+			this.showShareModal = true
+		},
+		methods: {
+			sendHtmldata() {
+				const data = JSON.stringify(this.htmlData)
+				this.webViewSrc += encodeURIComponent(data)
+			},
+			getHtmlResponseData(data) {
+				console.log(data)
+			}
+		},
+		onLoad() {
+			this.windowHeight = uni.getSystemInfoSync().windowHeight
+			this.windowWidth = uni.getSystemInfoSync().windowWidth
+			this.sendHtmldata()
+		},
+		onBackPress(e) {
+			if(e.from === 'backbutton' && this.showShareModal === true) {
+				this.showShareModal = false
+				return true
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.container {
+		position: relative;
+	}
+	.share-modal {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		align-items: center;
+		width: 750upx;
+		height: 358upx;
+		background-color: #fff;
+		transition: height 0.4s;
+	}
+	.hide-modal {
+		height: 0;
+	}
+	.share-text {
+		margin: 30upx 0;
+		font-size: 26upx;
+		font-weight: bold;
+		color: #333;
+	}
+	.icon-wrapper {
+		flex-direction: row;
+		height: 173upx;
+	}
+	.wechat {
+		align-items: center;
+		margin: 0 45upx;
+	}
+	.icon-wechat {
+		margin-bottom: 15upx;
+		width: 88upx;
+		height: 88upx;
+	}
+	.wechat-text {
+		font-size: 26upx;
+		color: #333;
+	}
+	.cancel-modal {
+		width: 750upx;
+		height: 88upx;
+		line-height: 80upx;
+		text-align: center;
+		font-size: 30upx;
+		color: #333;
+		border-style: solid;
+		border-color: #666;
+		border-top-width: 1upx;
+	}
+</style>

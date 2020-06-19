@@ -1,0 +1,195 @@
+<template>
+	<view class="lession">
+		<video :src="videoData.videoSrc" controls class="lession-video"></video>
+		<view class="video-description">
+			<text class="video-title">{{ videoData.title }}</text>
+			<view class="type-and-collect">
+				<text class="type-text">{{ videoData.type }}——{{ videoData.lessionNums }}节课</text>
+				<view class="collect">
+					<image
+						class="collect-icon"
+						:src="isCollect ? '/static/icon/collect_active.png' : '/static/icon/collect_disabled.png'"
+						mode="aspectFill"
+						@click="isCollect = !isCollect"
+					>
+					</image>
+					<text class="collect-text">收藏</text>
+				</view>
+			</view>
+			<view class="other">
+				<text class="video-source">来源：{{ videoData.source }}</text>
+				<text class="play-times">{{ videoData.playTimes }}次播放</text>
+				<text class="published-time">发布时间：{{ videoData.publishedTime }}</text>
+			</view>
+		</view>
+		<view class="recommend">
+			<text class="recommend-text">相关推荐</text>
+			<view class="recommend-video-list">
+				<view
+					v-for="(item, index) in videoData.relativeRecommend"
+					:key="index"
+					class="recommend-video-list-item"
+				>
+					<image class="recommend-video-cover" :src="item.cover" mode="aspectFill"></image>
+					<view class="recommend-video-description">
+						<text class="recommend-video-title">{{ item.title }}</text>
+						<view class="recommend-video-source-and-playtimes">
+							<text class="recommend-video-source">来源：{{ item.source }}</text>
+							<text class="recommend-video-play-times">{{ item.playTimes }}次播放</text>
+						</view>
+						<text class="recommend-video-published-time">发布时间：{{ item.publishedTime }}</text>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	props: {
+		isCollect: {
+			type: Boolean,
+			default: true
+		}
+	},
+	data() {
+		return {
+			windowHeight: 675,
+			videoData: {
+				title: '全身减脂训练一：啦啦啦啦啦啦啦啦啦',
+				videoSrc: '',
+				type: '零基础',
+				lessionNums: 10,
+				source: 'B站',
+				playTimes: 360,
+				publishedTime: '2019年6月8日',
+				relativeRecommend: [
+					{
+						title: '全身减脂训练二：啦啦啦啦啦啦啦啦啦啦啦~',
+						cover: '/static/img/knowledge-demo.png',
+						source: 'B站',
+						playTimes: 360,
+						publishedTime: '2019年6月8日'
+					},
+					{
+						title: '全身减脂训练三：啦啦啦啦啦啦啦啦啦啦啦~',
+						cover: '/static/img/knowledge-demo.png',
+						source: 'B站',
+						playTimes: 360,
+						publishedTime: '2019年6月8日'
+					}
+				]
+			}
+		};
+	},
+	onLoad() {
+		this.windowHeight = uni.getSystemInfoSync().windowHeight
+	}
+};
+</script>
+
+<style scoped>
+.lession-video {
+	width: 750upx;
+	height: 517.5upx;
+}
+.video-description {
+	border-style: solid;
+	border-bottom-color: #EEEEEE;
+	border-bottom-width: 6upx;
+	padding: 36upx 34upx 20upx 34upx;
+}
+.video-title {
+	font-size: 30upx;
+	font-weight: bold;
+	color: #333;
+}
+.type-and-collect {
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	padding: 30upx 0;
+}
+.type-text {
+	font-size: 28upx;
+	font-weight: bold;
+	color: #666;
+	margin-right: 88upx;
+}
+.collect {
+	flex-direction: row;
+	align-items: center;
+}
+.collect-icon {
+	width: 44upx;
+	height: 44upx;
+	margin-right: 18upx;
+}
+.collect-text {
+	font-size: 24upx;
+	color: #726C6C;
+}
+.other {
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+.video-source {
+	font-size: 24upx;
+	color: #726C6C;
+}
+.play-times {
+	font-size: 24upx;
+	color: #726C6C;
+}
+.published-time {
+	font-size: 24upx;
+	color: #726C6C;
+}
+.recommend {
+	padding: 10upx 24upx;
+}
+.recommend-text {
+	padding: 30upx 0;
+	font-size: 32upx;
+	font-weight: bold;
+	color: #333;
+}
+.recommend-video-list-item {
+	flex-direction: row;
+	margin-bottom: 30upx;
+	background-color: #fff;
+}
+.recommend-video-cover {
+	width: 240upx;
+	height: 240upx;
+	border-radius: 10upx;
+}
+.recommend-video-description {
+	justify-content: space-around;
+	padding: 10upx 0 10upx 67upx;
+}
+.recommend-video-title {
+	width: 360upx;
+	font-size: 30upx;
+	color: #333;
+}
+.recommend-video-source-and-playtimes {
+	flex-direction: row;
+	align-items: center;
+}
+.recommend-video-source {
+	margin-right: 51upx;
+	font-size: 24upx;
+	color: #726C6C;
+}
+.recommend-video-play-times {
+	font-size: 24upx;
+	color: #726C6C;
+}
+.recommend-video-published-time {
+	font-size: 24upx;
+	color: #726C6C;
+}
+</style>

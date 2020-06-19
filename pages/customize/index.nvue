@@ -1,0 +1,167 @@
+<template>
+	<view class="contanier-customize">
+		<view class="container-lession">
+			<text class="title-lession">公开课</text>
+			<swiper class="swiper-cover"
+				:indicator-dots="true"
+				:autoplay="true"
+				:circular="true"
+				indicator-active-color="#FC3D5F"
+				@change="setDescription"
+			>
+				<swiper-item v-for="(item, index) in lessions" :key="index" @click="toLession">
+					<image :src="item.cover" class="cover" mode="scaleToFill"></image>
+				</swiper-item>
+			</swiper>
+			<text class="discription">{{ lessions[currentDot].description }}</text>
+		</view>
+		<view class="container-focus">
+			<view class="title-focus">
+				<text class="title-focus-text">看点</text>
+				<view class="more" @tap="toKnowledge">
+					<text class="more-text">查看更多</text>
+					<image class="more-icon" src="/static/icon/right.png"></image>
+				</view>
+			</view>
+			<list class="list-focus">
+				<cell v-for="(item, index) in focusList" :key="index">
+					<view class="list-item" @click="toKnowledgeDetail" :data-data="item">
+						<image class="cover-focus" :src="item.cover" mode="aspectFill"></image>
+						<view class="list-item-content">
+							<text class="list-focus-content-text">{{ item.content }}</text>
+							<view class="like">
+								<image class="icon-like" src="/static/icon/collect_disabled.png"></image>
+								<text class="num-like">{{ item.likeNum }}</text>
+							</view>
+						</view>
+					</view>
+				</cell>
+			</list>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				lessions: [
+					{ id: '01', cover: '/static/img/customize_lession1.png', description: '01一起运动，减脂塑形提上日程~' },
+					{ id: '02', cover: '/static/img/customize_lession2.png', description: '02一起运动，减脂塑形提上日程~' },
+					{ id: '03', cover: '/static/img/knowledge-demo.png', description: '03一起运动，减脂塑形提上日程~' }
+				],                    
+				currentDot: 0,        
+				focusList: [          
+					{ id: '01', cover: '/static/img/customize_lession1.png', content: '01久坐人群必备-肩颈拉伸，啦啦啦啦啦啦~~~', likeNum: 862 },
+					{ id: '02', cover: '/static/img/customize_lession2.png', content: '02久坐人群必备-肩颈拉伸，啦啦啦啦啦啦~~~', likeNum: 800 },
+					{ id: '03', cover: '/static/img/knowledge-demo.png', content: '03久坐人群必备-肩颈拉伸，啦啦啦啦啦啦~~~', likeNum: 900 }
+				]
+			}
+		},
+		methods: {
+			setDescription(e) {
+				this.currentDot = e.detail.current
+			},
+			toLession(e) {
+				uni.navigateTo({
+					url: "./lession"
+				})
+			},
+			toKnowledge() {
+				uni.navigateTo({
+					url: "./knowledge"
+				})
+			},
+			toKnowledgeDetail(e) {
+				const detailData = JSON.stringify(e.currentTarget.dataset.data);
+				uni.navigateTo({
+					url: `./knowledge-detail?data=${detailData}`
+				})
+			}
+		}
+	}
+</script>
+
+<style scoped>
+.title-lession {
+	font-size: 34upx;
+	font-weight: bold;
+	padding: 28upx 0 36upx 24upx;
+}
+.swiper-cover {
+	height: 518upx;
+}
+.cover {
+	width: 750upx;
+	height: 518upx;
+}
+.discription {
+	padding: 24upx;
+	font-size: 30upx;
+	color: #000;
+	border-style: solid;
+	border-bottom-width: 10upx;
+	border-bottom-color: #eee;
+}
+.container-focus {
+	padding: 0 28upx;
+}
+.title-focus {
+	height: 113.5upx;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+.title-focus-text {
+	font-size: 34upx;
+	font-weight: bold;
+}
+.more {
+	flex-direction: row;
+	align-items: center;
+}
+.more-text {
+	font-size: 24upx;
+	color: #999;
+}
+.more-icon {
+	width: 30upx;
+	height: 30upx;
+	margin-left: 20upx;
+}
+.list-item {
+	flex-direction: row;
+	width: 694upx;
+	height: 200upx;
+	margin-bottom: 22upx;
+	background-color: #f5f5f5;
+}
+.cover-focus {
+	width: 240upx;
+	height: 200upx;
+}
+.list-item-content {
+	padding: 22.5upx 0 0 30upx;
+}
+.list-focus-content-text {
+	width: 386upx;
+	height: 86upx;
+	line-height: 44upx;
+	font-size: 30upx;
+	color: #333;
+}
+.like {
+	flex-direction: row;
+	align-items: center;
+	margin-top: 20upx;
+}
+.icon-like {
+	width: 34upx;
+	height: 34upx;
+	margin-right: 32upx;
+}
+.num-like {
+	font-size: 28upx;
+	color: #726C6C;
+}
+</style>

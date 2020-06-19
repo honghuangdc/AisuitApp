@@ -1,0 +1,39 @@
+<template>
+	<view class="result" :style="{ height: windowHeight }">
+		<view class="result-content">
+			<text>{{ result }}</text>
+			<view class="button">
+				<text class="button-text">{{ button }}</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				windowHeight: 675,
+				result: '恭喜您，激活成功',
+				button: '立即使用',
+				resultData: [
+					{ result: '恭喜您，激活成功', button: '立即使用' },
+					{ result: '很遗憾，激活失败', button: '知道了' },
+					{ result: '该服装已被他人激活', button: '请重试' }
+				]
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.result {
+		padding: 0 24upx;
+		background-color: #f5f5f5;
+	}
+	.result-content {
+		height: 480upx;
+		align-items: center;
+		justify-content: space-between;
+	}
+</style>

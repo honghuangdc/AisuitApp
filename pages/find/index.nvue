@@ -1,0 +1,123 @@
+<template>
+	<view class="container">
+		<list class="video-list"
+			:loadmoreoffset="windowHeight * 3"
+			:show-scrollbar="false"
+			@loadmore="getMoreData"
+			:pagingEnabled="true"
+			:scrollable="true"
+		>
+			<cell class="list-cell" v-for="(item, index) in videoList" :key="index">
+				<view class="cell-wrapper" :style="{ height: windowHeight + 'px' }">
+					<view
+						class="list-item"
+						v-for="(listItem, listIndex) in item"
+						:key="listIndex"
+						@click="toVideo"
+						:data-data="item"
+					>
+						<view class="list-item-wrapper">
+							<image class="video-cover" :src="listItem.cover" mode="scaleToFill"></image>
+							<text class="video-description">{{ listItem.description }}</text>
+							<view class="video-user">
+								<image :src="listItem.avatar" class="avatar"></image>
+								<text class="user-name">{{ listItem.userName }}</text>
+							</view>
+						</view>
+					</view>
+				</view>
+			</cell>
+		</list>
+	</view>
+</template>
+<script>
+
+import { twoDemensionArray } from '@/utils/util.js';
+export default {
+	data() {
+		return {
+			windowHeight: 675,
+			videoList: [],
+		};
+	},
+	onLoad() {
+		this.windowHeight = uni.getSystemInfoSync().safeArea.height
+		const data = []
+		for(let i = 0; i < 10; i ++) {
+			data.push({
+				id: `id_${i}`,
+				videoUrl: '',
+				cover: '/static/img/index_video-cover.jpg',
+				userName: `${i}健身狂人`,
+				description: `${i}__15天马甲线速成，在家就能完成的完美技巧。`,
+				avatar: '/static/img/index_avatar.png'
+			})
+		}
+		this.videoList = [...twoDemensionArray(data)]
+	},
+	methods: {
+		toVideo(e) {
+			const videoData = JSON.stringify(e.currentTarget.dataset.data)
+			uni.navigateTo({
+				url: `./video?data=${videoData}`
+			})
+		}
+	}
+};
+</script>
+<style scoped>
+	.container {
+		background-color: #fff;
+		flex: 1;
+	}
+	.cell-wrapper {
+		width: 750upx;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+  .list-item {
+		width: 375upx;
+  	height: 620upx;
+		align-items: center;
+		border-style: solid;
+		border-color: #00FF00;
+		border-width: 1px;
+  }
+	.list-item-wrapper {
+		position: relative;
+		justify-content: flex-end;
+		width: 334upx;
+		height: 611upx;
+	}
+	.video-cover {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 334upx;
+		height: 611upx;
+	}
+	.video-description {
+		padding: 0 24upx;
+		font-size: 24upx;
+		color: #fff;
+		line-height: 44upx;
+	}
+	.video-user {
+		flex-direction: row;
+		align-items: center;
+		padding: 27upx 24upx 24upx;
+	}
+	.avatar {
+		width: 44upx;
+		height: 44upx;
+		border-radius: 44upx;
+		border-style: solid;
+		border-width: 1upx;
+		border-color: #fff;
+	}
+	.user-name {
+		margin-left: 10upx;
+		font-size: 22upx;
+		color: #fff;
+	}
+</style>

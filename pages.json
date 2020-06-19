@@ -1,0 +1,168 @@
+{
+	"pages": [
+		{
+			"path": "pages/find/index",
+			"style": {
+				"navigationBarTitleText": "发现"
+			}
+		},
+		{
+			"path": "pages/find/video",
+			"style": {
+				"navigationBarTitleText": "发现",
+				"navigationBarBackgroundColor": "#000000"
+			}
+		},
+		{
+			"path": "pages/measure/index",
+			"style": {
+				"navigationBarTitleText": "测量"
+			}
+		},
+		{
+			"path": "pages/customize/index",
+			"style": {
+				"navigationBarTitleText": "塑形定制"
+			}
+		},
+		{
+			"path": "pages/customize/lession",
+			"style": {
+				"navigationBarTitleText": "公开课",
+				"app-plus":{
+					"background": "#f5f5f5"
+				}
+			}
+		},
+		{
+			"path": "pages/customize/knowledge",
+			"style": {
+				"navigationBarTitleText": "塑形知识"
+			}
+		},
+		{
+			"path": "pages/customize/knowledge-detail",
+			"style": {
+				"navigationBarTitleText": "塑形知识",
+				"app-plus":{
+					"background": "#f5f5f5"
+				}
+			}
+		},
+		{
+			"path": "pages/user/index",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/body-data/index",
+			"style": {
+				"navigationBarTitleText": "身体数据",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [
+							{
+								"text": "\ue606",
+								"fontSrc": "/static/font/iconfont.ttf",
+								"fontSize":"20px"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+		  "path" : "pages/body-data/history",
+		  "style" : {
+				"navigationBarTitleText": "历史数据"
+			}
+		},
+		{
+		  "path" : "pages/body-data/modify-bodydata",
+		  "style" : {
+				"navigationBarTitleText": "身高体重"
+			}
+		},
+		{
+			"path": "pages/user/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/user/information",
+			"style": {
+				"navigationBarTitleText": "个人信息"
+			}
+		},
+		{
+			"path": "pages/validate/index",
+			"style": {
+				"navigationBarTitleText": "量体衣验证"
+			}
+		},
+		{
+			"path": "pages/collect/index",
+			"style": {
+				"navigationBarTitleText": "我的收藏"
+			}
+		},
+		{
+			"path": "pages/setting/index",
+			"style": {
+				"navigationBarTitleText": "设置更改"
+			}
+		},
+		{
+			"path": "pages/setting/account-security",
+			"style": {
+				"navigationBarTitleText": "账号与安全"
+			}
+		},
+		{
+			"path": "pages/setting/modify-phone",
+			"style": {
+				"navigationBarTitleText": "更换手机号码"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "艾伊秀",
+		"navigationBarBackgroundColor": "#fff",
+		"backgroundColor": "#F5F5F5"
+	},
+	"tabBar": {
+		"backgroundColor": "#fff",
+		"borderStyle": "white",
+		"list": [
+			{
+				"pagePath": "pages/find/index",
+				"text": "发现",
+				"iconPath": "static/icon/home.png",
+				"selectedIconPath": "static/icon/home_actice.png"
+			},
+			{
+				"pagePath": "pages/measure/index",
+				"text": "测量",
+				"iconPath": "static/icon/measure.png",
+				"selectedIconPath": "static/icon/measure.png"
+			},
+			{
+				"pagePath": "pages/customize/index",
+				"text": "定制",
+				"iconPath": "static/icon/customize.png",
+				"selectedIconPath": "static/icon/customize_active.png"
+			},
+			{
+				"pagePath": "pages/user/index",
+				"text": "我的",
+				"iconPath": "static/icon/user.png",
+				"selectedIconPath": "static/icon/user_active.png"
+			}
+		],
+		"selectedColor": "#FC3D5F",
+		"color": "#999"
+	}
+}

@@ -1,0 +1,77 @@
+<template>
+	<view class="setting-container">
+		<view class="setting-list">
+			<view
+				class="list-item"
+				v-for="(item, index) in lists"
+				:key="index"
+				:data-tag="item.tag"
+				@click="handleList"
+			>
+				<text class="list-item-name">{{ item.name }}</text>
+				<image v-if="item.tag === 'userInfo'" class="avatar" src="/static/img/index_avatar.png" mode="aspectFill"></image>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				lists: [
+					{ name: '个人信息', tag: 'userInfo' },
+					{ name: '账号与安全', tag: 'accountSecurity' },
+					{ name: '用户协议', tag: 'userPlotocol' },
+					{ name: '隐私政策', tag: 'privacyPolicy' }
+				]
+			}
+		},
+		methods: {
+			handleList(e) {
+				const actionsObject = {
+					userInfo: () => {
+						console.log('userInfo')
+					},
+					accountSecurity: () => {
+						uni.navigateTo({
+							url: './account-security'
+						})
+					},
+					userPlotocol: () => {
+						plus.runtime.openURL('https://www.aisuit.com.cn/web/index/protocol')
+					},
+					privacyPolicy: () => {
+						plus.runtime.openURL('https://www.aisuit.com.cn/web/index/index')
+					}
+				}
+				actionsObject[e.currentTarget.dataset.tag]()
+			}
+		}
+	}
+</script>
+
+<style scoped>
+	.setting-container {
+		width: 750upx;
+		padding: 0 24upx;
+	}
+	.list-item {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		height: 96upx;
+		border-style: solid;
+		border-color: #eee;
+		border-bottom-width: 1upx;
+	}
+	.list-item-name {
+		font-size: 34upx;
+		color: #333;
+	}
+	.avatar {
+		width: 80upx;
+		height: 80upx;
+		border-radius: 80upx;
+	}
+</style>

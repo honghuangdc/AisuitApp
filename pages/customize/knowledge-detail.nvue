@@ -1,0 +1,89 @@
+<template>
+	<view class="container">
+		<image class="cover" :src="cover" mode="widthFix"></image>
+		<view>
+			<text class="title">{{ title }}</text>
+		</view>
+		<view class="article">
+			<!-- 缩进两个字符 -->
+			<text class="retract-words">缩进</text> 
+			<text class="article-content">{{ article }}</text>
+		</view>
+		<view class="collect-btn">
+			<image
+				class="icon-collect"
+				:src="isCollect ? '/static/icon/collect_active.png' : '/static/icon/collect_disabled.png'"
+				mode="aspectFill"
+				@click="isCollect = !isCollect"
+			>
+			</image>
+			<text class="collect-text">{{ isCollect ? '已收藏' : '收藏' }}</text>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		props:{
+			isCollect: {
+				type: Boolean,
+				default: true
+			}
+		},
+		data() {
+			return {
+				cover: '',
+				title: '',
+				article: ''
+			}
+		},
+		onLoad(options) {
+			const detailData = JSON.parse(options.data)
+			this.cover = detailData.cover
+			this.title = detailData.content
+			this.article = detailData.article
+		}
+	}
+</script>
+
+<style scoped>
+	.cover {
+		width: 750upx;
+	}
+	.title {
+		font-size: 34upx;
+		font-weight: bold;
+		margin: 47upx 0 40upx 30upx;
+	}
+	.article {
+		flex-direction: row;
+		padding: 0 30upx;
+	}
+	.retract-words {
+		font-size: 30upx;
+		color: rgba(0,0,0,0);
+	}
+	.article-content {
+		font-size: 30upx;
+	}
+	.collect-btn {
+		position: fixed;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		bottom: 0;
+		width: 750upx;
+		height: 68upx;
+		padding-right: 40upx;
+		background-color: #fff;
+	}
+	.icon-collect {
+		width: 44upx;
+		height: 44upx;
+	}
+	.collect-text {
+		margin-left: 18upx;
+		font-size: 28upx;
+		color: #726C6C;
+	}
+</style>

@@ -1,0 +1,122 @@
+<template>
+	<view class="container">
+		<view class="user-info__list">
+			<view class="avatar list-item">
+				<text class="list__name">头像</text>
+				<image class="avatar__img" :src="userInfo.userphoto"></image>
+			</view>
+			<view class="nickname list-item">
+				<text class="list__name">昵称</text>
+				<view class="list__value">
+					<text class="list__value-text">{{ userInfo.nickname }}</text>
+				</view>
+			</view>
+			<view class="phone list-item">
+				<text class="list__name">手机号</text>
+				<view class="list__value">
+					<text class="list__value-text">{{ userInfo.phone }}</text>
+				</view>
+			</view>
+			<view class="clothes-status list-item" @click="toValidateStatus">
+				<text class="list__name">量体衣状态</text>
+				<view class="list__value-icon">
+					<view class="list__value">
+						<text class="list__value-text">{{ userInfo.status ? '已验证' : '未验证' }}</text>
+						<text class="red-point" v-if="!userInfo.status"></text>
+					</view>
+					<image class="icon__right" src="/static/icon/right.png" mode="scaleToFill"></image>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	data() {
+		return {
+			userInfo: null
+		}
+	},
+	methods: {
+		toValidateStatus() {
+			uni.navigateTo({
+				url: '/pages/validate/index'
+			})
+		}
+	},
+	onLoad() {
+		this.userInfo = uni.getStorageSync('userInfo')
+	}
+}
+</script>
+
+<style scoped>
+	
+.container {
+	width: 750upx;
+	background-color: #f5f5f5;
+}
+
+.user-info__list {
+	width: 750upx;
+	background-color: #fff;
+	padding-left: 24upx;
+}
+
+.list-item {
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+	height: 96upx;
+	padding-right: 24upx;
+	border-style: solid;
+	border-color: #F5F5F5;
+	border-bottom-width: 1upx;
+}
+
+.list__name {
+	font-size: 34upx;
+	color: #333;
+}
+
+.list__value {
+	position: relative;
+	height: 96upx;
+	justify-content: center;
+	padding: 0 18upx;
+}
+
+.list__value-text {
+	font-size: 30upx;
+	color: #999;
+}
+
+.list__value-icon {
+	flex-direction: row;
+	align-items: center;
+}
+
+.avatar__img {
+	width: 80upx;
+	height: 80upx;
+	border-radius: 40upx;
+}
+
+.icon__right {
+	width: 30upx;
+	height: 30upx;
+}
+
+.red-point {
+	position: absolute;
+	top: 24upx;
+	right: 8upx;
+	width: 12upx;
+	height: 12upx;
+	border-radius: 6upx;
+	background-color: #FC3D5F;
+}
+
+</style>

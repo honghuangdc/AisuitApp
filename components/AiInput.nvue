@@ -1,0 +1,139 @@
+<template>
+	<view
+		:class="{'container': true, 'error-status': isError}"
+		:style="{ width: width + 'upx' }"
+	>
+		<view class="input-wrapper" :style="{ width: width + 'upx' }">
+			<input
+				class="input"
+				:value="value"
+				:type="type"
+				:placeholder="placeholder"
+				:maxlength="maxlength"
+				placeholder-class="placeholder"
+				v-model="inputValue"
+				v-bind="$props"
+				:style="{ width: width * 0.7 + 'upx' }"
+			/>
+			<slot name="option"></slot>
+		</view>
+		<view class="error-field">
+			<text class="error-field-text" :class="{ 'error-text': isError }">{{ errorMsg }}</text>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				inputValue: this.value,
+				isError: false,
+				errorMsg: ''
+			};
+		},
+		props: {
+			value: [String, Number],
+			placeholder: String,
+			rule: Object,
+			type: {
+				type: String,
+				default: 'text'
+			},
+			maxlength: String,
+			rules: Array,
+			width: Number
+		},
+		methods: {
+			validateEmpty() {
+				if(this.inputValue === '') {
+					this.isError = true
+					this.errorMsg = this.rule.requiredMsg
+					setTimeout(() => {
+						this.isError = false
+						this.errorMsg = ''
+					}, 3500);
+					return 'error'
+				} else {
+					return 'success'
+				}
+			},
+			validateValue() {
+				if(!this.rule.pattern.test(this.inputValue)) {
+					this.isError = true
+					this.errorMsg = this.rule.message
+					setTimeout(() => {
+						this.isError = false
+						this.errorMsg = ''
+					}, 3500)
+					return 'error'
+				} else {
+					return 'success'
+				}
+			}
+		},
+		watch: {
+			value(newValue, oldValue) {
+				this.inputValue = newValue
+			},
+			inputValue(newValue) {
+			  this.$emit('input', newValue)
+			},
+		}
+	}
+</script>
+
+<style scoped>
+	
+.container {
+	position: relative;
+	height: 104upx;
+	transition: height 1s;
+}
+
+.error-status {
+	height: 140upx;
+}
+
+.input-wrapper {
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	height: 104upx;
+	border-style: solid;
+	border-color: #eee;
+	border-bottom-width: 1upx;
+}
+
+.error-field {
+	position: absolute;
+	height: 32upx;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	left: 0;
+	bottom: 0;
+}
+
+.error-field-text {
+	font-size: 25upx;
+	color: #fc3d5f;
+	opacity: 0;
+	transition: opacity 1s;
+}
+
+.error-text {
+	opacity: 1;
+}
+
+.input {
+	font-size: 34upx;
+	color: #333;
+}
+
+.placeholder {
+	font-size: 17upx;
+	color: #ccc;
+}
+
+</style>

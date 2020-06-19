@@ -1,0 +1,313 @@
+<template>
+	<view class="login-contanier" :style="{ height: windowHeight + 'px' }">
+		<text class="title">手机快捷登录</text>
+		<ai-input
+			ref="phone"
+			name="phone"
+			v-model="model.phone"
+			placeholder="请输入手机号"
+			:rule="rules.phone"
+			maxlength="11"
+			:width="686"
+		>
+		</ai-input>
+		<ai-input
+			ref="validateCode"
+			name="validateCode"
+			v-model="model.validateCode"
+			placeholder="请输入验证码"
+			:rule="rules.validateCode"
+			maxlength="6"
+			:width="686"
+		>
+			<template slot="option">
+				<text class="button__get-code" @click="getValidateCode">{{ count ? `${count}秒后重发` : '获取验证码' }}</text>
+			</template>
+		</ai-input>
+		<view class="button__login" @click="submitForm">
+			<text class="text__button__login">登录</text>
+		</view>
+		<view class="agreement">
+			<text class="text__agreement">点击按钮表示同意</text>
+			<text class="text__agreement color__red">《艾伊秀用户协议》</text>
+			<text class="text__agreement">和</text>
+			<text class="text__agreement color__red">《隐私条款》</text>
+		</view>
+		<view class="login-type">
+			<view class="login-type__top">
+				<text class="line__left"></text>
+				<text class="text__login-type">其他登陆方式</text>
+				<text class="line__right"></text>
+			</view>
+			<view class="login-type__bottom">
+				<view class="icon-wechat" @click="getWxLogin">
+					<image src="/static/icon/wechat.png" mode="scaleToFill" class="img__icon-wechat"></image>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+import AiInput from '../../components/AiInput';
+import REGEXP from '../../utils/regExp.js';
+import { _getValidateCode, _checkValidateCode, _getUserInfo } from '../../utils/request.js';
+export default {
+	components: {
+		AiInput
+	},
+	data() {
+		return {
+			windowHeight: 675,
+			count: null,
+			interval: null,
+			model: {
+				phone: '',
+				validateCode: ''
+			},
+			rules: {
+				phone: { pattern: REGEXP.PHONE_REGEXP, message: '手机格式输入错误！', requiredMsg: '手机号不能为空！' },
+				validateCode: { pattern: REGEXP.VALIDATE_CODE_REGEXP, message: '验证码格式输入错误！', requiredMsg: '验证码不能为空！' }
+			},
+			wechatLoginRes: null
+		};
+	},
+	methods: {
+		// 获取验证码
+		getValidateCode() {
+			if(this.count) {
+				uni.showToast({
+					title: '请不要频繁点击!',
+					icon: 'none'
+				})
+				return
+			}
+			const { validateEmpty, validateValue } = this.$refs.phone
+			if(validateEmpty() === 'success' && validateValue() === 'success') {
+				uni.showLoading({
+					title: '加载中！'
+				})
+				this.countDown()
+				setTimeout(() =>{
+					uni.hideLoading()
+				}, 1000)
+				_getValidateCode(this.model.phone).then(res => {
+					console.log(res)
+					uni.setStorageSync('correctCode', res.code)
+				})
+			}
+		},
+		
+		// 校验验证码
+		checkValidateCode() {
+			const { phone, validateCode } = this.model
+			if(validateCode !== uni.getStorageSync('correctCode')) {
+				uni.showToast({
+					title: '验证码不正确，请重新输入！',
+					icon: 'none'
+				})
+				return
+			}
+			_checkValidateCode(phone, validateCode).then(res => {
+				uni.showToast({
+					title: res.msg,
+					icon: 'none'
+				})
+				if(res.code == "0") {
+					this.getUserInfo()
+				}
+			})
+		},
+		
+		// 获取用户信息
+		getUserInfo() {
+			uni.showLoading({
+				title: '正在加载用户信息'
+			})
+			_getUserInfo(this.model.phone).then(res => {
+				if(res.code == '0') {
+					uni.showToast({
+						title: '登陆成功',
+						icon: 'success'
+					})
+					console.log(res)
+					uni.setStorageSync('userInfo', res.data.user[0])
+					uni.setStorageSync('isLogin', true)
+					uni.switchTab({
+						url: '/pages/user/index'
+					})
+				} else {
+					uni.showLoading({
+						title: '加载失败，请重新登陆'
+					})
+				}
+			})
+			uni.hideLoading()
+		},
+		
+		// 表单提交
+		submitForm() {
+			if(this.checkForm()) {
+				return
+			}
+			// 校验通过,发起请求
+			this.checkValidateCode()
+		},
+		
+		// 微信登陆
+		getWxLogin() {
+		 let that = this;
+		 uni.login({
+		 	provider: 'weixin',
+			success: (res) => {
+			  that.wechatLoginRes = res.authResult;
+			  // 获取微信用户信息
+			  uni.getUserInfo({
+			    provider: "weixin",
+			    success: res => {
+						const userInfo = {
+							userphoto: res.userInfo.avatarUrl,
+							phone: res.userInfo.phone,
+							nickname: res.userInfo.nickName,
+						}
+						uni.setStorageSync('userInfo', userInfo)
+						uni.setStorageSync('isLogin', true)
+						uni.switchTab({
+							url: '/pages/user/index'
+						})
+			    },
+			  });
+			},
+			fail: () => {
+				plus.nativeUI.toast('微信授权登录失败，请重试!', {
+					verticalAlign: 'center',
+					icon: 'static/icon/fail.png',
+					duration: 2500
+				})
+			}
+		 })
+		},
+		
+		// 60秒计时
+		countDown() {
+			if (this.count) {
+				return
+			}
+			this.count = 60;
+			this.interval = setInterval(() => {
+				this.count ? this.count -- : clearInterval(this.interval);
+			}, 1000);
+		},
+		
+		// 表单校验
+		checkForm() {
+			const result = [];
+			for(let key in this.model) {
+				if(this.$refs[key].validateEmpty() === 'error'){
+					result.push('error')
+				} else {
+					result.push(this.$refs[key].validateValue())
+				}
+			}
+			return result.some(value => {  // 返回true,代表有错误
+				return value === 'error'
+			})
+		},
+	},
+	onLoad() {
+		this.windowHeight = uni.getSystemInfoSync().windowHeight
+	}
+};
+</script>
+
+<style scoped>
+	
+.login-contanier {
+	background-color: #fff;
+	width: 750upx;
+	padding: 0 32upx;
+}
+
+.title {
+	font-size: 48upx;
+	font-weight: bold;
+	color: #333;
+	margin: 48upx 0;
+}
+
+.button__get-code {
+	width: 180upx;
+	font-size: 28upx;
+	text-align: center;
+	color: #333;
+}
+
+.button__login {
+	align-items: center;
+	justify-content: center;
+	height: 94upx;
+	margin-top: 60upx;
+	background-color: #fc3d5f;
+	border-radius: 6upx;
+}
+
+.text__button__login {
+	font-size: 36upx;
+	color: #fff;
+}
+
+.agreement {
+	flex-direction: row;
+	justify-content: flex-start;
+	margin-top: 31upx;
+}
+
+.text__agreement {
+	font-size: 28upx;
+	color: #999;
+}
+
+.color__red {
+	color: #fc3d5f;
+}
+
+.login-type {
+	align-items: center;
+	margin-top: 314upx;
+}
+
+.login-type__top {
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.text__login-type {
+	font-size: 28upx;
+	color: #999;
+	padding: 0 20upx;
+}
+
+.line__left {
+	width: 134upx;
+	height: 4upx;
+	background-image: linear-gradient(to right, #fff, #cbcbcb);
+}
+
+.line__right {
+	width: 134upx;
+	height: 4upx;
+	background-image: linear-gradient(to right, #cbcbcb, #fff);
+}
+
+.icon-wechat {
+	align-items: center;
+	margin-top: 46upx;
+}
+
+.img__icon-wechat {
+	width: 104upx;
+	height: 104upx;
+}
+
+</style>

@@ -1,0 +1,88 @@
+<template>
+	<view class="contanier" :style="{ height: windowHeight + 'px' }">
+		<image :src="bodyImgUrl" mode="widthFix" class="body-img"></image>
+		<view class="tips">
+			<text class="tips-text">{{ measureData.height }}cm {{ measureData.weight }}kg {{ measureData.gender }}</text>
+			<text class="tips-text">测量时间：{{ measureData.date }} {{ measureData.time }}</text>
+		</view>
+		<view class="measure-data">
+			<swiper class="swiper">
+				<swiper-item>
+					<view class="swiper-item"></view>
+				</swiper-item>
+			</swiper>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				windowHeight: 675,
+				bodyImgUrl: '/static/img/body-data_xiongwei.png',
+				bodyData: [
+					{ name: '胸围', value: 84.6, tag: 'xiongwei' },
+					{ name: '腰围', value: 63.5, tag: 'yaowei' },
+					{ name: '臀围', value: 90.4, tag: 'tunwei' },
+					{ name: '臂长', value: 58.8, tag: 'bichang' },
+					{ name: '臂围', value: 60.2, tag: 'biwei' },
+					{ name: '腿长', value: 91.6, tag: 'tuichang' },
+					{ name: '腿围', value: 84.3, tag: 'tuiwei' },
+				],
+				measureData: {
+					date: '2020/05/18',
+					time: '18:40',
+					height: '165',
+					weight: '55',
+					gender: '女'
+				}
+			}
+		},
+		onNavigationBarButtonTap() {
+			console.log('share')
+		},
+		methods: {
+			
+		},
+		onLoad() {
+			this.windowHeight = uni.getSystemInfoSync().windowHeight
+		}
+	}
+</script>
+
+<style scoped>
+	.contanier {
+		align-items: center;
+		justify-content: space-between;
+		width: 750upx;
+		padding-top: 76upx;
+		background-color: #444;
+	}
+	.body-img {
+		width: 560upx;
+		height: 999upx;
+	}
+	.tips {
+		flex-direction: row;
+		justify-content: space-between;
+		width: 608upx;
+	}
+	.tips-text {
+		font-size: 22upx;
+		color: #fff;
+	}
+	.measure-data {
+		justify-content: center;
+		align-items: center;
+		width: 750upx;
+		height: 200upx;
+		background-color: #999;
+		opacity: 0.3;
+	}
+	.swiper {
+		width: 636upx;
+		height: 160upx;
+		background-color: #333;
+	}
+</style>

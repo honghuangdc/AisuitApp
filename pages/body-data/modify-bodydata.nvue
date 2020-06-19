@@ -1,0 +1,172 @@
+<template>
+	<view class="container" :style="{ height: windowHeight + 'px' }">
+		<view class="form">
+			<view class="picker-wrapper">
+				<text class="picker-lable">身 高（cm）</text>
+				<picker
+					mode="multiSelector"
+					:value="heightPickerIndex"
+					:range="[heightPicker.int, heightPicker.float]"
+					@columnchange="changePicker"
+					data-type="height"
+				>
+					<text class="picker-text">{{ height }}</text>
+				</picker>
+			</view>
+			<view class="picker-wrapper">
+				<text class="picker-lable">体 重（kg）</text>
+				<picker
+					mode="multiSelector"
+					:value="weightPickerIndex"
+					:range="[weightPicker.int, weightPicker.float]"
+					@columnchange="changePicker"
+					data-type="weight"
+				>
+					<text class="picker-text">{{ weight }}</text>
+				</picker>
+			</view>
+			<view class="radio-wrapper">
+				<text class="picker-radio-lable">性 别</text>
+				<radio-group class="radio-group" @change="changeGender">
+				  <label class="radio-lable" v-for="item in genderData" :key="item.tag">
+				    <radio :value="item.tag" :checked="gender === item.tag" color="#FC3D5F" />
+						<text class="radio-text">{{item.name}}</text>
+				  </label>
+				</radio-group>
+			</view>
+		</view>
+		<text class="save-button">保存</text>
+	</view>
+</template>
+
+<script>
+	import { pickerData } from '@/utils/util.js'
+	export default {
+		data() {
+			return {
+				windowHeight: 675,
+				heightPicker: pickerData('height'),
+				heightPickerIndex: [0, 0],
+				weightPicker: pickerData('weight'),
+				weightPickerIndex: [0, 0],
+				genderData: [
+					{ name: '男', tag: 'male' },
+					{ name: '女', tag: 'female' }
+				],
+				height: 0,
+				weight: 0,
+				gender: ''
+			}
+		},
+		methods: {
+			getCurrentPickerData() {
+				const actionsArr = ['height', 'weight']
+				actionsArr.map(value => {
+					const integer = parseInt(this[value])
+					this[`${value}PickerIndex`][0] = this[`${value}Picker`].int.indexOf(integer)
+					const floatNum = parseFloat((this[value] - integer).toFixed(1))
+					this[`${value}PickerIndex`][1] = this[`${value}Picker`].float.indexOf(floatNum)
+				})
+			},
+			changePicker(e) {
+				const { type } = e.currentTarget.dataset
+				if(typeof this[type] === 'string') {
+					this[type] = 0.0
+				}
+				const { column, value } = e.detail   // column: 0表示整数列 1表示小数列
+				if(column === 0) {
+					const floatNum = (this[type] - parseInt(this[type])).toFixed(1)
+					this[type] = this[`${type}Picker`].int[value] + parseFloat(floatNum)
+				} else {
+					this[type] = parseInt(this[type]) + this[`${type}Picker`].float[value]
+				}
+				this.getCurrentPickerData()
+			},
+			changeGender(e) {
+				this.gender = e.detail.value
+			},
+			hasHeightOrWeight() {
+				this.height = this.height ? this.height : '——请选择——'
+				this.weight = this.weight ? this.weight : '——请选择——'
+			}
+		},
+		onLoad() {
+			this.windowHeight = uni.getSystemInfoSync().windowHeight
+			this.hasHeightOrWeight()
+			this.getCurrentPickerData()
+		}
+	}
+</script>
+
+<style scoped>
+	.container {
+		padding-bottom: 88upx;
+		justify-content: space-between;
+	}
+	.form{
+		padding-top: 19upx;
+		background-color: #fff;
+	}
+	.picker-wrapper {
+		flex-direction: row;
+		height: 100upx;
+		align-items: center;
+		border-style: solid;
+		border-color: #eee;
+		border-bottom-width: 1upx;
+	}
+	.picker-lable {
+		margin-right: 80upx;
+		padding-left: 34upx;
+		width: 220upx;
+		height: 100upx;
+		line-height: 100upx;
+		font-size: 34upx;
+		color: #333;
+	}
+	.picker-radio-lable {
+		margin-right: 55upx;
+		padding-left: 34upx;
+		width: 220upx;
+		height: 100upx;
+		line-height: 100upx;
+		font-size: 34upx;
+		color: #333;
+	}
+	.picker-text {
+		width: 220upx;
+		height: 80upx;
+		line-height: 80upx;
+		text-align: center;
+		font-size: 26upx;
+		font-weight: bold;
+		color: #999;
+	}
+	.radio-wrapper {
+		flex-direction: row;
+	}
+	.radio-group {
+		flex-direction: row;
+		padding-left: 34upx;
+	}
+	.radio-lable {
+		flex-direction: row;
+		align-items: center;
+		margin-right: 50upx;
+	}
+	.radio-text {
+		font-size: 30upx;
+		color: #666;
+	}
+	.save-button {
+		margin: 0 34upx;
+		height: 98upx;
+		line-height: 98upx;
+		text-align: center;
+		border-width: 0;
+		border-radius: 8upx;
+		background-color: #FC3D5F;
+		font-size: 36upx;
+		color: #fff;
+	}
+</style>

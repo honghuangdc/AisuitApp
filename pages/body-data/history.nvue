@@ -1,0 +1,171 @@
+<template>
+	<view class="container" :style="{ height: windowHeight + 'px' }">
+		<view class="label" :style="{ height: windowHeight + 'px' }">
+			<view class="label-item" v-for="item in label" :key="item.tag">
+				<text class="label-text">{{ item.name }}</text>
+			</view>
+		</view>
+		<view class="main-content" :style="{ height: windowHeight + 'px' }">
+			<view class="tip">
+				<view class="slider" :style="{ transform: `translateX(${sliderValue}px)` }"></view>
+			</view>
+			<scroll-view class="swiper" :scroll-x="true" :show-scrollbar="false" @scroll="scroll">
+				<view
+					class="swiper-item"
+					v-for="(item, index) in measureData"
+					:key="index"
+					:style="{ height: windowHeight - 10 + 'px', width: index === 0 ? '180upx' : '150upx', backgroundColor: index === 0 ? '#333333' : (index === 1 ? '#555555' : '#777777') }"
+				>
+					<template v-if="index === 0">
+						<view
+							class="first-column-data"
+							v-for="(it, i) in item" :key="i"
+						>
+							<text
+								class="first-column-data-text"
+								:style="{ fontSize: i === 'date' ? '22upx' : '28upx', width: i === 'date' ? '180upx' : '100upx' }"
+							>{{ it }}</text>
+							<text v-if="i !== 'date' && differData[i] !== ''" class="red-text">{{ differData[i] }}</text>
+						</view>
+					</template>
+					<template v-else>
+						<text 
+							class="data-text"
+							v-for="(value, dataIndex) in item" :key="dataIndex"
+							:style="{ fontSize: dataIndex === 'date' ? '22upx' : '28upx' }"
+						>{{ value }}</text>
+					</template>
+				</view>
+			</scroll-view>
+		</view>
+	</view>
+</template>
+
+<script>
+	import { transformPxRpx } from '@/utils/util.js'
+	export default {
+		data() {
+			return {
+				windowHeight: 675,
+				sliderValue: 0,
+				swiperSlideValue: 0,
+				label: [
+					{ name: '时间', tag: 'date' },
+					{ name: '胸围', tag: 'xiongwei' },
+					{ name: '腰围', tag: 'yaowei' },
+					{ name: '臀围', tag: 'tunwei' },
+					{ name: '臂长', tag: 'bichang' },
+					{ name: '臂围', tag: 'biwei' },
+					{ name: '腿长', tag: 'tuichang' },
+					{ name: '腿围', tag: 'tuiwei' }
+				],
+				measureData: [
+					{ date: '2020/06/02', xiongwei: '84.6', yaowei: '63.5', tunwei: '90.4', bichang: '58.8', biwei: '60.2', tuichang: '91.7', tuiwei: '84.3' },
+					{ date: '2020/05/02', xiongwei: '84.4', yaowei: '63.3', tunwei: '90.9', bichang: '58.1', biwei: '60.2', tuichang: '91.6', tuiwei: '84.3' },
+					{ date: '2020/04/02', xiongwei: '84.5', yaowei: '63.2', tunwei: '90.4', bichang: '58.8', biwei: '60.2', tuichang: '91.6', tuiwei: '84.3' },
+					{ date: '2020/03/02', xiongwei: '84.7', yaowei: '63.8', tunwei: '90.4', bichang: '58.8', biwei: '60.2', tuichang: '91.6', tuiwei: '84.3' },
+					{ date: '2020/02/02', xiongwei: '84.9', yaowei: '63.9', tunwei: '90.4', bichang: '58.8', biwei: '60.2', tuichang: '91.6', tuiwei: '84.3' },
+					{ date: '2020/01/02', xiongwei: '84.4', yaowei: '63.1', tunwei: '90.4', bichang: '58.8', biwei: '60.2', tuichang: '91.6', tuiwei: '84.3' },
+					{ date: '2020/01/01', xiongwei: '84.1', yaowei: '63.4', tunwei: '90.4', bichang: '58.8', biwei: '60.2', tuichang: '91.6', tuiwei: '84.3' },
+				],
+				differData: {}
+			}
+		},
+		methods: {
+			scroll(e) {
+				const { scrollLeft, scrollWidth } = e.detail
+				const scale = e.detail.scrollLeft / (scrollWidth - transformPxRpx(630, 'rpxToPx'))
+				this.sliderValue = transformPxRpx(630 - 180, 'rpxToPx') * scale
+			},
+			getDifferData() {
+				for(let key in this.measureData[0]) {
+					if(key !== 'date') {
+						const differ = this.measureData[0][key] - this.measureData[1][key]
+						let formatDiffer = ''
+						const actionsArr = [
+							[ differ > 0, () => formatDiffer = '+' + differ.toFixed(1) ],
+							[ differ === 0, () => formatDiffer = '' ],
+							[ true, () => formatDiffer = differ.toFixed(1) ]
+						]
+						actionsArr.some(value => {
+							if(value[0]) {
+								value[1]()
+								return true
+							}
+						})
+						this.differData[key] = formatDiffer
+					}
+				}
+			}
+		},
+		onLoad() {
+			this.windowHeight = uni.getSystemInfoSync().windowHeight
+			this.getDifferData()
+		}
+	}
+</script>
+
+<style scoped>
+	.container {
+		flex-direction: row;
+		width: 750upx;
+		background-color: #000;
+	}
+	.label {
+		width: 120upx;
+		padding-top: 20upx;
+	}
+	.label-item {
+		justify-content: center;
+		align-items: center;
+		width: 120upx;
+		height: 100upx;
+	}
+	.label-text {
+		font-size: 30upx;
+		color: #fff;
+	}
+	.main-content {
+		width: 630upx;
+	}
+	.tip {
+		width: 630upx;
+		height: 10px;
+	}
+	.slider {
+		width: 180upx;
+		height: 20upx;
+		background-color: #FC3D5F;
+		border-radius: 15upx;
+		transform: translateX(0);
+		transition: transform 0.01s;
+	}
+	.swiper {
+		flex-direction: row;
+		width: 630upx;
+		background-color: #777;
+	}
+	.swiper-item {
+		background-color: #777;
+	}
+	.data-text {
+		text-align: center;
+		height: 100upx;
+		line-height: 100upx;
+		color: #fff;
+	}
+	.first-column-data {
+		height: 100upx;
+		flex-direction: row;
+		align-items: center;
+	}
+	.first-column-data-text {
+		text-align: center;
+		font-size: 28upx;
+		color: #fff;
+	}
+	.red-text {
+		font-size: 28upx;
+		color: #FC3D5F;
+	}
+</style>
